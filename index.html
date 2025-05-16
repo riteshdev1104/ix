@@ -1,0 +1,198 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IXURL - Upload & Share Files</title>
+  <link rel="icon" href="https://res.cloudinary.com/dlyrnzcvx/image/upload/v1747378326/u8lq58grkvqsoich1kn2.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background: #0f2027;
+      background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+      color: #fff;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #1e293b;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 700;
+      font-size: 32px;
+      color: #00e6e6;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 10px;
+    }
+    input[type="file"] {
+      background: #f9fafb;
+      color: #111;
+    }
+    button {
+      background: #00e6e6;
+      color: #111;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #00b3b3;
+    }
+    .output {
+      margin-top: 30px;
+      background: #0f172a;
+      padding: 20px;
+      border-radius: 10px;
+      word-break: break-word;
+    }
+    a {
+      color: #38bdf8;
+    }
+    img.qr {
+      max-width: 200px;
+      margin-top: 10px;
+    }
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 14px;
+      color: #94a3b8;
+    }
+    .nav {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .nav a {
+      margin: 0 10px;
+      color: #ccc;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .nav a:hover {
+      color: #00e6e6;
+    }
+    .section {
+      margin-top: 40px;
+      padding: 20px;
+      background: #1e293b;
+      border-radius: 12px;
+    }
+    #progressBar {
+      width: 100%;
+      height: 20px;
+      background-color: #334155;
+      border-radius: 10px;
+      margin-top: 15px;
+    }
+    #progressBarFill {
+      height: 100%;
+      width: 0%;
+      background-color: #00e6e6;
+      border-radius: 10px;
+      transition: width 0.4s ease;
+    }
+    .social {
+      margin-top: 30px;
+      text-align: center;
+    }
+    .social a {
+      margin: 0 10px;
+      font-weight: bold;
+      color: #00e6e6;
+      text-decoration: none;
+    }
+    .social a:hover {
+      color: #38bdf8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>IXURL</h1>
+    <div class="nav">
+      <a onclick="showSection('about')">About</a>
+      <a onclick="showSection('privacy')">Privacy</a>
+      <a onclick="showSection('security')">Security</a>
+    </div>
+    <input type="file" id="fileInput" />
+    <button onclick="upload()">Upload</button>
+    <div id="progressBar"><div id="progressBarFill"></div></div>
+    <div class="output" id="output"></div>
+    <div class="social">
+      <p>Follow the Developers:</p>
+      <a href="https://instagram.com/_ritesh.0_0" target="_blank">@_ritesh.0_0</a>
+      <a href=""></a>
+    </div>
+  </div>  <div class="container section" id="about" style="display:none;">
+    <h2>About</h2>
+    <p>IXURL is a fast and secure file sharing platform powered by @_.ritesh.0_0. Upload your files, share links, and scan QR codes — all with ease.</p>
+  </div>
+  <div class="container section" id="privacy" style="display:none;">
+    <h2>Privacy</h2>
+    <p>Your uploaded files are stored securely. IXURL does not track users or share data with third parties.</p>
+  </div>
+  <div class="container section" id="security" style="display:none;">
+    <h2>Security</h2>
+    <p>All uploads are encrypted during transfer. We use trusted services to handle and store your data.</p>
+  </div>  <footer>
+    &copy; 2025 IXURL. All rights reserved.
+  </footer>  <script>
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+      window.scrollTo({ top: document.getElementById(id).offsetTop - 20, behavior: 'smooth' });
+    }
+
+    async function upload() {
+      const file = document.getElementById('fileInput').files[0];
+      if (!file) return alert("Select a file first");
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "https://cloudnonx.onrender.com/upload", true);
+      xhr.setRequestHeader("Authorization", "Bearer uploader123");
+
+      xhr.upload.onprogress = function (e) {
+        if (e.lengthComputable) {
+          let percent = (e.loaded / e.total) * 100;
+          document.getElementById('progressBarFill').style.width = percent + '%';
+        }
+      };
+
+      xhr.onload = function () {
+        const data = JSON.parse(xhr.responseText);
+        const out = document.getElementById("output");
+        if (data.uploaded) {
+          const f = data.uploaded[0];
+          const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(f.url)}`;
+          out.innerHTML = `
+            <p><strong>Watch:</strong> <a href="${f.url}" target="_blank">${f.url}</a></p>
+            <p><strong>Download:</strong> <a href="${f.download}" target="_blank">${f.download}</a></p>
+            <img class="qr" src="${qr}" alt="QR Code" />
+          `;
+        } else {
+          out.innerHTML = `<p style='color:red;'>${data.error || "Upload failed"}</p>`;
+        }
+        document.getElementById('progressBarFill').style.width = '0%';
+      };
+
+      xhr.send(formData);
+    }
+  </script></body>
+</html>
